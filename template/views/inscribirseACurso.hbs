@@ -1,0 +1,60 @@
+{{>header}}
+<div class="container-fluid">
+    <p>
+        Bienvenido a la pagina de Inscripcion de curso
+    </p>
+
+    <form method="post"   action="/inscribirme">
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="documentoIdentidad">Documento de identidad</label>
+                    <input type="number" class="form-control" id="documentoIdentidad" placeholder="Documento de identidad"
+                        name="documento" required>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="correoElectronico">Correo Electronico</label>
+                    <input type="text" class="form-control" id="correoElectronico" placeholder="Correo Electronico" name="correo"
+                        required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="nombre">Nombre completo</label>
+                    <input type="text" class="form-control" id="nombre" placeholder="Nombre" name="nombre"
+                        required>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="telefono">Telefono</label>
+                    <input type="number" class="form-control" id="telefono" placeholder="Telefono" name="telefono"
+                        required>
+                </div>
+            </div>
+        </div>    
+         <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="curso">Cursos disponibles</label>
+                    <select class="form-control" id="curso" name="curso" required>
+                        {{{listaCursos}}}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col align-self-center">
+                <button type="submit" class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+                    data-target="#exampleModal">Inscribirme</button>
+            </div>
+        </div>
+
+    </form>
+{{>footer}}

@@ -1,0 +1,92 @@
+{{>header}}
+<div class="container-fluid">
+    <p>
+        Bienvenido a la pagina de registro de cursos
+    </p>
+
+    <form method="post"   action="/crearCurso">
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="nombreCurso">Nombre curso</label>
+                    <input type="text" class="form-control" id="nombreCurso" placeholder="Nombre del curso"
+                        name="nombre" required>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="idCurso">Id del curso</label>
+                    <input type="number" class="form-control" id="idCurso" placeholder="Id del curso" name="id"
+                        required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="descripcionCurso">Descripcion del curso</label>
+                    <textarea class="form-control" id="descripcionCurso" rows="3" name="descripcion"
+                        required></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="valorCurso">Valor del curso</label>
+                    <input type="number" class="form-control" id="valorCurso" placeholder="Valor del curso" name="valor"
+                        required>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="modalidadCurso">Modalidad del curso</label>
+                    <select class="form-control" id="modalidadCurso" name="modalidad">
+                        <option>Virtual</option>
+                        <option>Presencial</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="intensidadCurso">Intensidad del curso</label>
+                    <input type="number" class="form-control" id="intensidadCurso" placeholder="Intensidad del curso"
+                        name="intensidad">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col align-self-center">
+                <button type="submit" class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+                    data-target="#exampleModal">Crear</button>
+            </div>
+        </div>
+
+    </form>
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{>footer}}

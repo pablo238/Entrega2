@@ -1,0 +1,19 @@
+{
+  "name": "entrega2",
+  "version": "1.0.1",
+  "description": "Entrega semana 2",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "pabloo238@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "bootstrap": "^4.3.1",
+    "express": "^4.16.4",
+    "hbs": "^4.0.3",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.7"
+  }
+}
