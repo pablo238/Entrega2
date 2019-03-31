@@ -68,11 +68,10 @@ const crearC = (curso) => {
     let duplicado = listaCursos.find(cur => cur.id == curso.id)
     if (!duplicado) {
         listaCursos.push(curs);
-        console.log(listaCursos);
         guardarC();
-
+        return (`<div class="alert alert-success" role="alert">Curso creado con exito</div>`);
     } else
-        console.log('Ya existe otro curso con este id');
+        return ('<div class="alert alert-danger" role="alert">Ya existe otro curso con este id</div>');
 
 }
 
@@ -92,29 +91,49 @@ const crearU = (user) => {
         documento: user.documento,
         curso: ((user.curso).split('---'))[0]
     };
-    console.log(userPerCourse.curso)
     let duplicado = listaUsuarios.find(use => use.documento == user.documento)
     if (!duplicado) {
         listaUsuarios.push(us);
         guardarU();
         listaCxU.push(userPerCourse);
         guardarCxU();
-        console.log("Se crea usuario con exito y se registra en el curso")
+        return (
+        `<div class="alert alert-success" role="alert">
+            Se crea usuario con exito y se registra en el curso
+        </div>`)
     } else {
         let cursoduplicado = listaCxU.find(cpu => (cpu.curso == userPerCourse.curso && cpu.documento == userPerCourse.documento))
         if (!cursoduplicado) {
             listaCxU.push(userPerCourse);
             guardarCxU();
-            console.log('Ya existe el usuario con este id registrado,Pero se registra en el curso')
+           return (`
+           <div class="alert alert-warning" role="alert">
+            Ya existe el usuario con este documento registrado,Pero se registra en el curso
+            </div>
+            `)
         } else {
-            console.log('Ya existe el usuario con este id registrado y con este curso registrado');
+            return (
+                `<div class="alert alert-danger" role="alert">
+                Ya existe el usuario con este documento registrado y con este curso registrado
+            </div>`);
         }
     }
 
 
 }
 
+const cambiarEstadoC=(curso)=>{
+    listarC();
+    listaCursos.filter(x=> x.id==curso.id)[0].estado=curso.estado;
+    guardarC();
+}
 
+const eliminarUsuarioDeCurso=(usuario)=>{
+    listarCxU();
+    let posicion=listaCxU.filter(p=> (p.documento==usuario.documento && p.id==usuario.id))
+    listaCxU.splice(posicion,1);
+    guardarCxU();
+}
 hbs.registerHelper('listaCursos', () => {
     listarC();
     text = ""
@@ -128,7 +147,7 @@ hbs.registerHelper('listaCursos', () => {
         `})
 
     }
-    console.log(text)
+    
     return text;
 
 })
@@ -179,15 +198,38 @@ hbs.registerHelper('gestionarCurso', () => {
     let text = '<div class="accordion" id="accordionExample">';
     let i = 1;
     listaCursos.forEach(x => {
+        if (x.estado=='Disponible') {
+            color='success'
+        } else {
+            color='danger'
+        }
         personas = personasEnCurso(x);
         text = text +
-            `<div class="card">
+            `<div class="card text-${color} border-${color}">
         <div class="card-header" id="heading${i}">
           <h2 class="mb-0">
+          <form method="post"   action="/gestionCurso">
             <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
-            Nombre de el curso: ${x.nombre}<br> 
+            Nombre de el curso
+            <div class="form-group">
+            <input type="text" name='nombre' readonly class="form-control-plaintext" id="staticEmail" value="${x.nombre}">
+            </div>
+            <div class="form-group">
+            <input type="text" name='id' hidden readonly class="form-control-plaintext" id="staticEmail" value="${x.id}">
+            </div>
             </button>
           </h2>
+          
+            <div class="form-group">
+                <label for="estadoCurso">Estado del curso</label>
+                    <select class="form-control" id="estadoCurso" name="estado">
+                        <option>Disponible</option>
+                        <option>Cerrado</option>
+                    </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Cambiar estado</button>
+        </form>
         </div>
     
         <div id="collapse${i}" class="collapse" aria-labelledby="heading${i}" data-parent="#accordionExample">
@@ -222,12 +264,19 @@ const personasEnCurso = (curso) => {
     inscritos.forEach(curxx => {
         let persona = listaUsuarios.filter(perx => curxx.documento == perx.documento);
         resultado = resultado +
-            `<tr>
+            ` <form method="post"   action="/gestionCurso">
+            <input type="text" name='id' hidden readonly class="form-control-plaintext" id="staticEmail" value="${curso.id}">
+            <tr>
             <th scope="row">${i}</th>
-            <td>${persona[0].nombre}</td>
-            <td>${persona[0].documento}</td>
-            <td><button type="button" class="btn btn-danger">Eliminar</button></td>
-          </tr>`
+                <td>
+                    <input type="text" name='nombre' readonly class="form-control-plaintext" id="staticEmail" value="${persona[0].nombre}">
+                </td>
+                <td>
+                    <input type="text" name='documento' readonly class="form-control-plaintext" id="staticEmail" value="${persona[0].documento}">
+                </td>
+            <td><button type="submit" class="btn btn-danger">Eliminar</button></td>
+          </tr>
+          </form>`
         i++;
 
     });
@@ -238,5 +287,7 @@ const personasEnCurso = (curso) => {
 }
 module.exports = {
     crearC,
-    crearU
+    crearU,
+    cambiarEstadoC,
+    eliminarUsuarioDeCurso
 }

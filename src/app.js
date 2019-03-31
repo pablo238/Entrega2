@@ -20,16 +20,20 @@ app.set('views', directorioViews)
 app.use(bodyParser.urlencoded({extended: false}));
 app.set('view engine','hbs');
 
+app.get('/',(req,res)=>{
+    res.render('index')
+})
 
 app.get('/crearCurso',(req,res)=>{
-    console.log(req.body);
     res.render('crearCurso')
 })
 
 app.post('/crearCurso',(req,res)=>{
     if (req.body=={}) {
     } else {
-        funciones.crearC(req.body) 
+        res.render('resultadoCreacion',{
+            mensaje: funciones.crearC(req.body)
+        });   
     }
 })
 
@@ -45,13 +49,25 @@ app.get('/inscribirme',(req,res)=>{
 app.post('/inscribirme',(req,res)=>{
     if (req.body=={}) {
     } else {
-        funciones.crearU(req.body) 
+        res.render('resultadoCreacion',{
+            mensaje: funciones.crearU(req.body)
+        
+        });
+        
     }
 })
 
 
 app.get('/gestionCurso',(req,res)=>{
-    console.log(req.body);
+    res.render('gestionarCurso')
+})
+
+app.post('/gestionCurso',(req,res)=>{
+    if(req.body.documento==null){
+        funciones.cambiarEstadoC(req.body)
+    }else{
+        funciones.eliminarUsuarioDeCurso(req.body)
+    }
     res.render('gestionarCurso')
 })
 
