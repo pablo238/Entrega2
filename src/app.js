@@ -7,6 +7,7 @@ const funciones=require('./helpers/helpers')
 const dirNode_modules = path.join(__dirname , '../node_modules')
 require('./helpers/helpers')
 const port = process.env.PORT || 3000;
+process.env.URLDB='mongodb://localhost:27017/cursos'
 const directoriopublico=path.join(__dirname,'../public');
 const directoriopartials=path.join(__dirname,'../template/partials');
 const directorioViews=path.join(__dirname,'../template/views');
@@ -19,6 +20,13 @@ hbs.registerPartials(directoriopartials);
 app.set('views', directorioViews)
 app.use(bodyParser.urlencoded({extended: false}));
 app.set('view engine','hbs');
+
+mongoose.connect(process.env.URLDB, {useNewUrlParser: true}, (err, resultado) => {
+	if (err){
+		return console.log(error)
+	}
+	console.log("conectado")
+});
 
 app.get('/',(req,res)=>{
     res.render('index')
