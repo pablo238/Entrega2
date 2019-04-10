@@ -6,7 +6,7 @@ const bodyParser=require('body-parser');
 const funciones=require('./helpers/helpers')
 const dirNode_modules = path.join(__dirname , '../node_modules')
 require('./helpers/helpers')
-
+const port = process.env.PORT || 3000;
 const directoriopublico=path.join(__dirname,'../public');
 const directoriopartials=path.join(__dirname,'../template/partials');
 const directorioViews=path.join(__dirname,'../template/views');
@@ -72,6 +72,6 @@ app.post('/gestionCurso',(req,res)=>{
 })
 
 
-app.listen(3000,()=>{
-    console.log('Escuchando en el puerto 3000')
+app.listen(port,()=>{
+    console.log('Escuchando en el puerto '+port)
 })
