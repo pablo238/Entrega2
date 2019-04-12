@@ -1,61 +1,11 @@
 const hbs = require('hbs');
-const fs = require('fs');
-listaCursos = [];
-listaUsuarios = [];
-listaCxU = [];
-
-const listarC = () => {
-    try {
-        listaCursos = require('../../cursos.json')
-    } catch (error) {
-        listaCursos = [];
-    }
-}
-
-const listarU = () => {
-    try {
-        listaUsuarios = require('../../usuarios.json')
-    } catch (error) {
-        listaUsuarios = [];
-    }
-}
-
-const listarCxU = () => {
-    try {
-        listaCxU = require('../../CursoxUsuario.json')
-    } catch (error) {
-        listaCxU = [];
-    }
-}
-
-const guardarC = () => {
-    let datos = JSON.stringify(listaCursos);
-    fs.writeFile('cursos.json', datos, (err) => {
-        if (err) throw (err);
-        console.log('Cursos guardados con exito')
-    })
-}
-
-const guardarU = () => {
-    let datos = JSON.stringify(listaUsuarios);
-    fs.writeFile('usuarios.json', datos, (err) => {
-        if (err) throw (err);
-        console.log('Usuarios guardados con exito')
-    })
-}
-
-const guardarCxU = () => {
-    let datos = JSON.stringify(listaCxU);
-    fs.writeFile('CursoxUsuario.json', datos, (err) => {
-        if (err) throw (err);
-        console.log('Cursos por usuario guardados con exito')
-    })
-}
+const Estudiante= require('./../models/estudiante')
+const UserPerCourse= require('./../models/userPerCourse')
+const Curso= require('./../models/curso')
 
 const crearC = (curso) => {
 
-    listarC();
-    let curs = {
+    let curs  =new Curso( {
         nombre: curso.nombre,
         descripcion: curso.descripcion,
         modalidad: curso.modalidad,
@@ -64,80 +14,114 @@ const crearC = (curso) => {
         intensidad: curso.intensidad,
         estado: 'Disponible'
 
-    };
-    let duplicado = listaCursos.find(cur => cur.id == curso.id)
+    });
+    
+    Curso.find({id:curso.id}).exec((err,dup)=>{
+        
+        
+    })
+    console.log(this.duplicado)
     if (!duplicado) {
-        listaCursos.push(curs);
-        guardarC();
+        curs.save((err,resultado)=>{
+            if (err) {
+                return console.log(err);
+            }
+        })
+        
         return (`<div class="alert alert-success" role="alert">Curso creado con exito</div>`);
     } else
         return ('<div class="alert alert-danger" role="alert">Ya existe otro curso con este id</div>');
-
+    
+    
 }
 
 const crearU = (user) => {
-    listarC();
-    listarU();
-    listarCxU();
-    let us = {
+    
+    let estudiante =new Estudiante({
         documento: user.documento,
         correo: user.correo,
         nombre: user.nombre,
         telefono: user.telefono,
 
-    };
+    });
 
-    let userPerCourse = {
+    let userPerCourse =new UserPerCourse({
         documento: user.documento,
         curso: ((user.curso).split('---'))[0]
-    };
-    let duplicado = listaUsuarios.find(use => use.documento == user.documento)
-    if (!duplicado) {
-        listaUsuarios.push(us);
-        guardarU();
-        listaCxU.push(userPerCourse);
-        guardarCxU();
-        return (
-        `<div class="alert alert-success" role="alert">
-            Se crea usuario con exito y se registra en el curso
-        </div>`)
-    } else {
-        let cursoduplicado = listaCxU.find(cpu => (cpu.curso == userPerCourse.curso && cpu.documento == userPerCourse.documento))
-        if (!cursoduplicado) {
-            listaCxU.push(userPerCourse);
-            guardarCxU();
-           return (`
-           <div class="alert alert-warning" role="alert">
-            Ya existe el usuario con este documento registrado,Pero se registra en el curso
-            </div>
-            `)
-        } else {
-            return (
-                `<div class="alert alert-danger" role="alert">
-                Ya existe el usuario con este documento registrado y con este curso registrado
-            </div>`);
+    });
+    let duplicado;
+    Estudiante.find({documento:user.documento}).exec((err,dup)=>{
+        
+        if (err) {
+            return console.log(err)
         }
+        duplicado=dup;
+    })
+        if (!duplicado) {
+            estudiante.save((err,resultado)=>{
+                if (err) {
+                    return console.log(err)
+                }
+            })
+            userPerCourse.save((err,resultado)=>{
+                if (err) {
+                    return console.log(err)
+                }
+            })
+            return (
+            `<div class="alert alert-success" role="alert">
+                Se crea usuario con exito y se registra en el curso
+            </div>`)
+        } else {
+            let cursoduplicado;
+            UserPerCourseEstudiante.find({documento:userPerCourse.documento, curso:userPerCourse.curso}).exec((err,cursodup)=>{
+                cursoduplicado=cursodup;
+            })
+                if (!cursoduplicado) {
+                userPerCourse.save((err,resultado)=>{
+                    if (err) {
+                        return console.log(err)
+                    }
+                })
+               return (`
+               <div class="alert alert-warning" role="alert">
+                Ya existe el usuario con este documento registrado,Pero se registra en el curso
+                </div>
+                `)
+            } else {
+                return (
+                    `<div class="alert alert-danger" role="alert">
+                    Ya existe el usuario con este documento registrado y con este curso registrado
+                </div>`);
+            }
+        
     }
-
+    
 
 }
 
 const cambiarEstadoC=(curso)=>{
-    listarC();
-    listaCursos.filter(x=> x.id==curso.id)[0].estado=curso.estado;
-    guardarC();
+    Curso.findOneAndUpdate({id:curso.id},{estado:curso.estado},{new:true},(err,resultado)=>{
+        if (err) {
+            return console.log(err);
+        }
+    })  
 }
 
 const eliminarUsuarioDeCurso=(usuario)=>{
-    listarCxU();
-    let posicion=listaCxU.filter(p=> (p.documento==usuario.documento && p.id==usuario.id))
-    listaCxU.splice(posicion,1);
-    guardarCxU();
+    UserPerCourse.findOneAndDelete({documento:usuario.documento,id:usuario.id},usuario,(err,resultado)=>{
+        if (err) {
+            return console.log(err);
+        }
+    })  
 }
+
 hbs.registerHelper('listaCursos', () => {
-    listarC();
     text = ""
-    let disponibles = listaCursos.filter(curs => curs.estado == 'Disponible');
+    let disponibles;
+    Curso.find({estado : 'Disponible'}).exec((err,disp)=>{
+        disponibles=disp;
+    })
     if (disponibles.length == 0) {
         text = ""
     } else {
@@ -147,16 +131,18 @@ hbs.registerHelper('listaCursos', () => {
         `})
 
     }
-    
+
     return text;
 
 })
 
 hbs.registerHelper('listarCDisponibles', () => {
-    listarC();
     let text = '<div class="accordion" id="accordionExample">';
     let i = 1;
-    let disponibles = listaCursos.filter(curs => curs.estado == 'Disponible');
+    let disponibles;
+    Curso.find({estado : 'Disponible'}).exec((err,disp)=>{
+   disponibles=disp;
+    })
     if (disponibles.length == 0) {
         text = "<p>No se han registrado Cursos</p>"
     } else {
@@ -186,17 +172,19 @@ hbs.registerHelper('listarCDisponibles', () => {
             i++;
         });
     }
+
     text = text + '</div>'
     return text;
 
 });
 
 hbs.registerHelper('gestionarCurso', () => {
-    listarC();
-    listarU();
-
     let text = '<div class="accordion" id="accordionExample">';
     let i = 1;
+    let listaCursos;
+    Curso.find({}).exec((err,listaCur)=>{
+        listaCursos=listaCur;
+    })
     listaCursos.forEach(x => {
         if (x.estado=='Disponible') {
             color='success'
@@ -241,15 +229,16 @@ hbs.registerHelper('gestionarCurso', () => {
    `
         i++;
     });
-
+    
     return text + '</div>';
 });
 
 const personasEnCurso = (curso) => {
 
-    listarCxU();
-    listarU();
-    let inscritos = listaCxU.filter(pers => pers.curso == curso.id);
+    let inscritos;
+    UserPerCourse.find({curso :curso.id}).exec((err,inscri)=>{
+     inscritos=inscri;
+    })
     resultado = `<table class="table">
     <thead class="thead-dark">
       <tr>
@@ -262,7 +251,10 @@ const personasEnCurso = (curso) => {
     <tbody>`
     i = 1;
     inscritos.forEach(curxx => {
-        let persona = listaUsuarios.filter(perx => curxx.documento == perx.documento);
+        let persona;
+        Estudiante.find({documento :curxx.documento}).exec((err,per)=>{
+            persona=per;
+        })
         resultado = resultado +
             ` <form method="post"   action="/gestionCurso">
             <input type="text" name='id' hidden readonly class="form-control-plaintext" id="staticEmail" value="${curso.id}">
@@ -278,11 +270,11 @@ const personasEnCurso = (curso) => {
           </tr>
           </form>`
         i++;
-
+        
     });
     resultado = resultado + `</tbody>
     </table>`
-
+    
     return resultado;
 }
 module.exports = {

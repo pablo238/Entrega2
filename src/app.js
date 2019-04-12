@@ -5,9 +5,9 @@ const hbs=require('hbs');
 const bodyParser=require('body-parser');
 const funciones=require('./helpers/helpers')
 const dirNode_modules = path.join(__dirname , '../node_modules')
+const mongoose=require('mongoose');
 require('./helpers/helpers')
-const port = process.env.PORT || 3000;
-process.env.URLDB='mongodb://localhost:27017/cursos'
+require('./config/config');
 const directoriopublico=path.join(__dirname,'../public');
 const directoriopartials=path.join(__dirname,'../template/partials');
 const directorioViews=path.join(__dirname,'../template/views');
@@ -20,6 +20,8 @@ hbs.registerPartials(directoriopartials);
 app.set('views', directorioViews)
 app.use(bodyParser.urlencoded({extended: false}));
 app.set('view engine','hbs');
+
+
 
 mongoose.connect(process.env.URLDB, {useNewUrlParser: true}, (err, resultado) => {
 	if (err){
@@ -55,6 +57,7 @@ app.get('/inscribirme',(req,res)=>{
 })
 
 app.post('/inscribirme',(req,res)=>{
+    
     if (req.body=={}) {
     } else {
         res.render('resultadoCreacion',{
@@ -80,6 +83,6 @@ app.post('/gestionCurso',(req,res)=>{
 })
 
 
-app.listen(port,()=>{
-    console.log('Escuchando en el puerto '+port)
+app.listen(process.env.PORT,()=>{
+    console.log('Escuchando en el puerto '+process.env.PORT)
 })
