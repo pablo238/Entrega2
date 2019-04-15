@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--Bootstrap css -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <style type="text/css">
+        .container-fluid {
+            margin: 100px
+        }
+
+        form {
+            border: grey 1px solid;
+            margin: 10px;
+            padding: 50px
+        }
+    </style>
+    <title>Educacion continua</title>
+</head>
+
+<body>
+    <center>
+        <div class="container-fluid">
+            
+            <div class="row">
+                <div class="col-sm"></div>
+                <div class="col-sm">
+                <img src="https://cdn.iconscout.com/icon/premium/png-256-thumb/register-14-373801.png" class="img-fluid" alt="Responsive image"><br>
+                </div>
+                <div class="col-sm"></div>
+            </div>
+            <div class="row align-items-center">
+            <div class="col-sm"> </div>
+            <div class="col-sm" >
+            <form method="post" action="/registrarse">
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <label for="documentoIdentidad">Documento de identidad</label>
+                            <input type="number" class="form-control" id="documentoIdentidad"
+                                placeholder="Documento de identidad" name="documento" required>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <label for="correoElectronico">Correo Electronico</label>
+                            <input type="text" class="form-control" id="correoElectronico"
+                                placeholder="Correo Electronico" name="correo" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col align-self-center">
+                        <div class="form-group">
+                            <label for="contraseña">Contraseña</label>
+                            <input type="password" class="form-control" id="contraseña"
+                                placeholder="Contraseña" name="password" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <label for="nombre">Nombre completo</label>
+                            <input type="text" class="form-control" id="nombre" placeholder="Nombre" name="nombre"
+                                required>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <label for="telefono">Telefono</label>
+                            <input type="number" class="form-control" id="telefono" placeholder="Telefono"
+                                name="telefono" required>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col align-self-center">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+                            data-target="#exampleModal">Registrarme</button>
+                    </div>
+                </div>
+
+            </form>
+            </div>
+            <div class="col-sm"></div>
+    </center>
+
+
+    <footer class="bd-footer text-muted">
+        <hr width="100%" style="color: #0d0d0e;" />
+        <div class="container-fluid p-3 p-md-5">
+            <p>Todos los derechos reservados</p>
+            <p>Creado por: Juan Pablo Betancur Giraldo</p>
+        </div>
+    </footer>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+
+</html>

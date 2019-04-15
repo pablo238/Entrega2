@@ -6,6 +6,14 @@ const estudianteSchema= new Schema({
         type:String,
         require:true
     },
+    password:{
+        type:String,
+        require:true
+    },
+    rol:{
+        type:String,
+        require:true
+    },
     nombre:{
         type:String,
         require:true
@@ -16,6 +24,7 @@ const estudianteSchema= new Schema({
         type:Number,
         require:true
      }
+
 });
 
 const Estudiante=mongoose.model('Estudiante',estudianteSchema);

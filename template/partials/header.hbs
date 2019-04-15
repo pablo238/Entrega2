@@ -14,26 +14,34 @@
         <div class="container">
             <center>
                 <h1 class="display-4">Bienvenido a educacion continua</h1>
-                <p class="lead">Aqui podras conocer y registrarte en nuestros cursos</p>
+                <p class="lead">Aqui podras conocer y registrarte en nuestros cursos</p><br>
+                <form action="/salir" method="get">
+                    <h3>{{nombre}}  </h3> 
+                    <button class="btn btn-danger my-2 my-sm-0" type="submit">Salir</button>
+                </form>
             </center>
+
         </div>
     </div>
 
     <ul class="nav  justify-content-center nav-pills">
         <li class="nav-item">
-            <a class="nav-link" id='home-tab' href="/">Home</a>
+            <a class="nav-link" id='home-tab' href="/home">Home</a>
         </li>
+        {{#if coordinador}}
         <li class="nav-item">
             <a class="nav-link" id='crearCurso-tab' href="/crearCurso">Crear curso</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id='inscribirme-tab'href="/inscribirme">Inscribirme</a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" id='gestionCurso-tab' href="/gestionCurso">Gestionar cursos</a>
         </li>
+        {{else}}
         <li class="nav-item">
             <a class="nav-link" id='listarCursos-tab' href="/listarCursos">Cursos disponibles</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" id='inscribirme-tab' href="/inscribirme">Inscribirme</a>
+        </li>
+        {{/if}}
+
     </ul>
-  
