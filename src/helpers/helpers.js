@@ -3,6 +3,9 @@ const Estudiante = require('./../models/estudiante')
 const UserPerCourse = require('./../models/userPerCourse')
 const Curso = require('./../models/curso')
 const bcrypt = require('bcrypt');
+require('../config/config');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 var resultgeneral;
 
 let setResultado = (res) => {
@@ -17,14 +20,33 @@ let getResultado = (callback) => {
     }, 1000)
 
 }
+
+const actualizarUsuario = (user,imagen, callback) => {
+    let estudiante = new Estudiante({
+        documento: user.documento,
+        correo: user.correo,
+        nombre: user.nombre,
+        telefono: user.telefono,
+        avatar:imagen
+        
+    });
+    Estudiante.update({ documento: user.documento },user,(err,resul)=>{
+        if (err) {
+            return console.log(err)
+        }
+    })
+    callback(imagen)
+}
 const registrarUsuario = (user, callback) => {
+    
     let estudiante = new Estudiante({
         documento: user.documento,
         correo: user.correo,
         nombre: user.nombre,
         telefono: user.telefono,
         rol: 'Aspirante',
-        password: bcrypt.hashSync(user.password, 10)
+        password: bcrypt.hashSync(user.password, 10),
+        avatar: 'false'
     });
 
     Estudiante.find({ documento: user.documento }).exec((err, duplicado) => {
@@ -41,6 +63,15 @@ const registrarUsuario = (user, callback) => {
                 `<img src="http://appys.com.co/html/software/imagenes/chulo.png" class="img-fluid"
             alt="Responsive image"><br>
             <h1>REGISTRO EXITOSO</h1><br>`)
+            const msg = {
+                to: user.correo,
+                from: 'admin@educacion.com',
+                subject: 'Bienvenido a educacion continua',
+                text: 'Bienvenido a nuestra pagina de educacion continua. ',
+                html: '<strong>Buen estudio!</strong>',
+              };
+              
+              sgMail.send(msg);
         } else {
             setResultado(
                 `<img src="https://t3.ftcdn.net/jpg/00/80/38/24/240_F_80382483_GWiqEyP0JZKhXyOUEnKz4sqzcns656GB.jpg" class="img-fluid"
@@ -257,13 +288,13 @@ const gestionarCurso = (callback) => {
             } else {
                 color = 'danger'
             }
-            let personas;
+            
             
             
             //personasEnCurso(x, function (per) {
              //   personas=per
             //});
-
+            let personas;
             UserPerCourse.find({ curso: x.id }).exec((err, inscritos) => {
                 resultado = `<table class="table">
                 <thead class="thead-dark">
@@ -411,5 +442,6 @@ module.exports = {
     registrarUsuario,
     listarCDisponibles,
     listaCursos,
-    gestionarCurso
+    gestionarCurso,
+    actualizarUsuario
 }

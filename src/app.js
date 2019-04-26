@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const funciones = require('./helpers/helpers')
 const dirNode_modules = path.join(__dirname, '../node_modules')
 const mongoose = require('mongoose');
+var multer = require('multer')
+var upload = multer({})
 require('./helpers/helpers')
 require('./config/config');
 const directoriopublico = path.join(__dirname, '../public');
@@ -46,10 +48,10 @@ app.use((req, res, next) => {
     if (req.session.documento) {
         res.locals.session = true
         res.locals.nombre = req.session.nombre
-        res.locals.documento =req.session.documento 
-        res.locals.telefono =req.session.telefono
-        res.locals.correo =req.session.correo
-        res.locals.rol =req.session.rol 
+        res.locals.documento = req.session.documento
+        res.locals.telefono = req.session.telefono
+        res.locals.correo = req.session.correo
+        res.locals.rol = req.session.rol
         if (req.session.rol == "Aspirante") {
             res.locals.aspirante = true
             res.locals.coordinador = false
@@ -84,15 +86,17 @@ app.post('/', (req, res) => {
             } else {
                 req.session.documento = req.body.documento;
                 req.session.nombre = duplicado[0].nombre;
-                req.session.telefono=duplicado[0].telefono;
-                req.session.correo=duplicado[0].correo;
+                req.session.telefono = duplicado[0].telefono;
+                req.session.correo = duplicado[0].correo;
                 req.session.rol = duplicado[0].rol;
+                req.session.avatar = duplicado[0].avatar.toString('base64');
                 let rol
-                if (req.session.rol=="Aspirante") {
-                    rol=false
+                if (req.session.rol == "Aspirante") {
+                    rol = false
                 } else {
-                    rol=true
+                    rol = true
                 }
+               
                 return res.render('home', {
                     nombre: duplicado[0].nombre.toUpperCase(),
                     coordinador: rol
@@ -106,12 +110,13 @@ app.post('/', (req, res) => {
 })
 
 app.get('/home', (req, res) => {
-    if(!res.locals.session){
+    if (!res.locals.session) {
         res.redirect("/")
-    }else{
-    return res.render('home', {
-        nombre: req.session.nombre.toUpperCase()
-    });}
+    } else {
+        return res.render('home', {
+            nombre: req.session.nombre.toUpperCase()
+        });
+    }
 })
 
 app.get('/registrarse', (req, res) => {
@@ -128,10 +133,10 @@ app.post('/registrarse', (req, res) => {
 })
 
 app.get('/crearCurso', (req, res) => {
-    if(!res.locals.coordinador){
+    if (!res.locals.coordinador) {
         res.redirect("/")
-    }else
-    res.render('crearCurso')
+    } else
+        res.render('crearCurso')
 })
 
 app.post('/crearCurso', (req, res) => {
@@ -146,27 +151,27 @@ app.post('/crearCurso', (req, res) => {
 })
 
 app.get('/listarCursos', (req, res) => {
-    if(!res.locals.aspirante){
+    if (!res.locals.aspirante) {
         res.redirect("/")
-    }else{
-    funciones.listarCDisponibles(function(resultado){
-        res.render('listaCursos',{
-            listarCDisponibles:resultado
+    } else {
+        funciones.listarCDisponibles(function (resultado) {
+            res.render('listaCursos', {
+                listarCDisponibles: resultado
+            })
         })
-    })
-}
+    }
 })
 
 app.get('/inscribirme', (req, res) => {
-    if(!res.locals.aspirante){
+    if (!res.locals.aspirante) {
         res.redirect("/")
-    }else{
-    funciones.listaCursos(function(resultado){
-        res.render('inscribirseACurso',{
-            listaCursos:resultado
+    } else {
+        funciones.listaCursos(function (resultado) {
+            res.render('inscribirseACurso', {
+                listaCursos: resultado
+            })
         })
-    })
-}
+    }
 })
 
 app.post('/inscribirme', (req, res) => {
@@ -184,15 +189,15 @@ app.post('/inscribirme', (req, res) => {
 
 
 app.get('/gestionCurso', (req, res) => {
-    if(!res.locals.coordinador){
+    if (!res.locals.coordinador) {
         res.redirect("/")
-    }else{
-    funciones.gestionarCurso(function(resultado){
-        res.render('gestionarCurso',{
-            gestionarCurso:resultado
+    } else {
+        funciones.gestionarCurso(function (resultado) {
+            res.render('gestionarCurso', {
+                gestionarCurso: resultado
+            })
         })
-    })
-}
+    }
 })
 
 app.post('/gestionCurso', (req, res) => {
@@ -204,12 +209,35 @@ app.post('/gestionCurso', (req, res) => {
     res.render('gestionarCurso')
 })
 
-
+app.get('/perfil', (req, res) => {
+    if (!res.locals.session) {
+        res.redirect("/")
+    } else {
+        console.log(req.session.avatar)
+        return res.render('perfil', {
+            avatar:req.session.avatar
+        });
+    }
+})
+app.post('/perfil',upload.single('imagen'), (req, res) => {
+    if (!res.locals.session) {
+        res.redirect("/")
+    } else {
+        funciones.actualizarUsuario(req.body,req.file.buffer, function (resultado) {
+            req.session.avatar=resultado.toString('base64')
+            
+            return res.render('perfil', {
+                avatar:req.session.avatar
+            });
+        })
+        
+    }
+})
 app.get('/salir', (req, res) => {
-	req.session.destroy((err) => {
-  		if (err) return console.log(err) 	
-	})	
-	res.redirect('/')	
+    req.session.destroy((err) => {
+        if (err) return console.log(err)
+    })
+    res.redirect('/')
 })
 
 app.listen(process.env.PORT, () => {

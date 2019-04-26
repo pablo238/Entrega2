@@ -11,3 +11,5 @@ else {
 }
 
 process.env.URLDB = urlDB
+
+process.env.SENDGRID_API_KEY='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'

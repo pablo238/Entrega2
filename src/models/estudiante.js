@@ -18,11 +18,17 @@ const estudianteSchema= new Schema({
         type:String,
         require:true
     },
-    correo:{type:String,
-        require:true},
+    correo:{
+        type:String,
+        require:true,
+        trim:true
+    },
      telefono:{
         type:Number,
         require:true
+     },
+     avatar:{
+         type:Buffer
      }
 
 });

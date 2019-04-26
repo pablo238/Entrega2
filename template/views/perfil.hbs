@@ -1,0 +1,63 @@
+{{>header}}
+<div class="container-fluid">
+    <center><h1>Editar mi perfil</h1><br>
+    {{#if avatar}}
+    <img src="data:img/png;base64,{{avatar}}" class="img-fluid" alt="Responsive image" width="100" height="100">
+     {{else}}
+     <img src="https://www.barnes-spain.com/portals/inmobarnes/images/agentes/no-photo.jpg" class="img-fluid" alt="Responsive image" width="200" height="200">
+     {{/if}}
+     </center>
+     <br><br><br>
+    <form method="post"   action="/perfil"  enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="documentoIdentidad">Documento de identidad</label>
+                    <input type="number" class="form-control" id="documentoIdentidad" placeholder="Documento de identidad" value={{documento}}
+                        name="documento" required>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="correoElectronico">Correo Electronico</label>
+                    <input type="email" class="form-control" id="correoElectronico" placeholder="Correo Electronico" name="correo" value={{correo}}
+                        required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="nombre">Nombre completo</label>
+                    <input type="text" class="form-control" id="nombre" placeholder="Nombre" name="nombre" value={{nombre}}
+                        required>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="telefono">Telefono</label>
+                    <input type="number" class="form-control" id="telefono" placeholder="Telefono" name="telefono" value={{telefono}}
+                        required>
+                </div>
+            </div>
+        </div>    
+         <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="imagen">Imagen de perfil</label>
+                    <input type="file" class="form-control" id="imagen" name="imagen" required>
+                   
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col align-self-center">
+                <button type="submit" class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+                    data-target="#exampleModal">Guardar cambios</button>
+            </div>
+        </div>
+
+    </form>
+{{>footer}}
