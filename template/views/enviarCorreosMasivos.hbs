@@ -1,0 +1,47 @@
+{{>header}}
+<div class="container-fluid">
+    <center>
+        <h1>Enviar Correos Masivos</h1>
+    </center>
+
+    <form method="post" action="/correos">
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="curso">Cursos disponibles</label>
+                    <select class="form-control" id="curso" name="curso" required>
+                        {{{listaCursos}}}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="asunto">Asunto</label>
+                    <input type="text" class="form-control" id="asunto"
+                        placeholder="Asunto"  name="asunto" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="cuerpo">Cuerpo del correo</label>
+                    <textarea class="form-control" id="cuerpo" name="cuerpo" required rows="10"
+                        cols="50">Escriba el cuerpo del correo aqui</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col align-self-center">
+                <button type="submit" class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+                    data-target="#exampleModal">Enviar</button>
+            </div>
+        </div>
+
+    </form>
+    {{>footer}}

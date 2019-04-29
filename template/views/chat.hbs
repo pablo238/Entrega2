@@ -1,0 +1,36 @@
+{{>header}}
+<div class="container-fluid">
+  <center>
+    <h1>Chat</h1>
+  </center>
+  <script src="socket.io/socket.io.js"></script>
+  <script src="../../src/js/socket.js"></script>
+  <form >
+
+    <div class="row">
+      <div class="col-sm">
+        <div class="form-group">
+          <label for="cuerpo">Mensajes</label>
+          <textarea class="form-control" id="mensajes" name="mensajes" rows="15" cols="50" id="aboutDescription"
+            style="resize: none;" data-role="none"></textarea>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-sm">
+        <div class="form-group">
+          <label for="asunto">Mensaje a enviar</label>
+          <input type="text" class="form-control" id="mensaje" placeholder="Mensaje" name="mensaje" required>
+        </div>
+      </div>
+
+      <div class="col align-self-center">
+        <button type="submit" class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+          data-target="#exampleModal">Enviar</button>
+      </div>
+    </div>
+  </form>
+</div>
+{{>footer}}

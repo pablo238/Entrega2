@@ -21,24 +21,34 @@ let getResultado = (callback) => {
 
 }
 
-const actualizarUsuario = (user,imagen, callback) => {
-    let estudiante = new Estudiante({
-        documento: user.documento,
-        correo: user.correo,
-        nombre: user.nombre,
-        telefono: user.telefono,
-        avatar:imagen
-        
-    });
-    Estudiante.update({ documento: user.documento },user,(err,resul)=>{
+const actualizarUsuario = (user, imagen, callback) => {
+    
+    Estudiante.findOneAndDelete({ documento: user.documento }, user, (err, resul) => {
         if (err) {
             return console.log(err)
         }
+        let estudiante = new Estudiante({
+            documento: user.documento,
+            correo: user.correo,
+            nombre: user.nombre,
+            telefono: user.telefono,
+            avatar: imagen,
+            rol:resul.rol,
+            password:resul.password
+        });
+
+        
+        estudiante.save((err, resultado) => {
+            if (err) {
+                return console.log(err)
+            }
+        })
     })
+   
     callback(imagen)
 }
 const registrarUsuario = (user, callback) => {
-    
+
     let estudiante = new Estudiante({
         documento: user.documento,
         correo: user.correo,
@@ -69,9 +79,9 @@ const registrarUsuario = (user, callback) => {
                 subject: 'Bienvenido a educacion continua',
                 text: 'Bienvenido a nuestra pagina de educacion continua. ',
                 html: '<strong>Buen estudio!</strong>',
-              };
-              
-              sgMail.send(msg);
+            };
+
+            sgMail.send(msg);
         } else {
             setResultado(
                 `<img src="https://t3.ftcdn.net/jpg/00/80/38/24/240_F_80382483_GWiqEyP0JZKhXyOUEnKz4sqzcns656GB.jpg" class="img-fluid"
@@ -279,7 +289,7 @@ const gestionarCurso = (callback) => {
 
 
     Curso.find({}).exec((err, listaCursos) => {
-        
+
         let text = '<div class="accordion" id="accordionExample">';
         let i = 1;
         listaCursos.forEach(x => {
@@ -288,11 +298,11 @@ const gestionarCurso = (callback) => {
             } else {
                 color = 'danger'
             }
-            
-            
-            
+
+
+
             //personasEnCurso(x, function (per) {
-             //   personas=per
+            //   personas=per
             //});
             let personas;
             UserPerCourse.find({ curso: x.id }).exec((err, inscritos) => {
@@ -306,9 +316,9 @@ const gestionarCurso = (callback) => {
                 </tr>
                 </thead>
                 <tbody>`
-                let j= 1;
+                let j = 1;
                 inscritos.forEach(curxx => {
-        
+
                     Estudiante.find({ documento: curxx.documento }).exec((err, persona) => {
                         resultado = resultado +
                             ` <form method="post"   action="/gestionCurso">
@@ -326,21 +336,21 @@ const gestionarCurso = (callback) => {
                         </form>`
                         j++;
                     })
-        
-        
+
+
                 });
-                
-                personas=(resultado + `</tbody>
+
+                personas = (resultado + `</tbody>
                 </table>`)
             })
-        
-        
-            
 
 
-                
-                text = text +
-                    `<div class="card text-${color} border-${color}">
+
+
+
+
+            text = text +
+                `<div class="card text-${color} border-${color}">
                 <div class="card-header" id="heading${i}">
                 <h2 class="mb-0">
                 <form method="post"   action="/gestionCurso">
@@ -374,8 +384,8 @@ const gestionarCurso = (callback) => {
                 </div>
                 </div>
         `
-                
-            
+
+
             i++;
         });
         setResultado(text + '</div>')
@@ -383,13 +393,13 @@ const gestionarCurso = (callback) => {
 
 
     getResultado(function (resultado) {
-        
+
         callback(resultado);
     });
 };
 
 const personasEnCurso = (curso, callback) => {
-    
+
     UserPerCourse.find({ curso: curso.id }).exec((err, inscritos) => {
         resultado = `<table class="table">
         <thead class="thead-dark">
@@ -424,7 +434,7 @@ const personasEnCurso = (curso, callback) => {
 
 
         });
-        
+
         setResultado(resultado + `</tbody>
         </table>`)
     })
@@ -432,6 +442,45 @@ const personasEnCurso = (curso, callback) => {
 
     getResultado(function (resultado) {
         callback(resultado)
+    })
+}
+
+const enviarCorreosMasivos = (user, callback) => {
+
+    let userPerCourse = new UserPerCourse({
+
+        curso: ((user.curso).split('---'))[0]
+    });
+
+    UserPerCourse.find({ curso: userPerCourse.curso }).exec((err, students) => {
+        if (students.length == 0) {
+            setResultado(`
+        <div class="alert alert-warning" role="alert">
+            No hay usuarios registrados en este curso
+            </div>
+            `)
+        } else {
+            students.forEach(st => {
+                Estudiante.find({ documento: st.documento }).exec((err, duplicado) => {
+
+                    sgMail.send({
+                        to: duplicado[0].correo,
+                        from: 'admin@educacion.com',
+                        subject: user.asunto,
+                        text: `Hola  ${duplicado[0].nombre}!,
+                        ${user.cuerpo}`
+                    });
+                })
+            })
+            setResultado(
+                `<div class="alert alert-success" role="alert">
+                Se han enviado los correos a todos los estudiantes registrados en el curso
+            </div>`);
+        }
+    })
+
+    getResultado(function (resultado) {
+        callback(resultado);
     })
 }
 module.exports = {
@@ -443,5 +492,6 @@ module.exports = {
     listarCDisponibles,
     listaCursos,
     gestionarCurso,
-    actualizarUsuario
+    actualizarUsuario,
+    enviarCorreosMasivos
 }

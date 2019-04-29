@@ -26,7 +26,8 @@ const bcrypt = require('bcrypt');
 var session = require('express-session')
 var MemoryStore = require('memorystore')(session)
 const Estudiante = require('./models/estudiante')
-
+const server = require('http').createServer();
+const io = require('socket.io')(server);
 app.use(session({
     cookie: { maxAge: 86400000 },
     store: new MemoryStore({
@@ -118,7 +119,32 @@ app.get('/home', (req, res) => {
         });
     }
 })
+app.get('/correos', (req, res) => {
+    if (!res.locals.coordinador) {
+        res.redirect("/")
+    } else {
+        funciones.listaCursos(function (resultado) {
+            res.render('enviarCorreosMasivos', {
+                listaCursos: resultado
+            })
+        })
+    }
+})
+app.post('/correos', (req, res) => {
+    funciones.enviarCorreosMasivos((req.body), function (resultado) {
+        res.render('resultadoRegistro', {
+            mensaje: resultado
+        });
+    })
+})
 
+app.get('/chat', (req, res) => {
+    if (!res.locals.session) {
+        res.redirect("/")
+    } else {
+    res.render('chat')
+    }
+})
 app.get('/registrarse', (req, res) => {
     res.render('registrarse')
 })
@@ -210,12 +236,19 @@ app.post('/gestionCurso', (req, res) => {
 })
 
 app.get('/perfil', (req, res) => {
+    let defau
     if (!res.locals.session) {
         res.redirect("/")
     } else {
-        console.log(req.session.avatar)
+        if (req.session.avatar=='ZmFsc2U=') {
+            defau=false
+        } else {
+            defau=true
+        }
+        
         return res.render('perfil', {
-            avatar:req.session.avatar
+            avatar:req.session.avatar,
+            notdefault:defau
         });
     }
 })
@@ -227,7 +260,8 @@ app.post('/perfil',upload.single('imagen'), (req, res) => {
             req.session.avatar=resultado.toString('base64')
             
             return res.render('perfil', {
-                avatar:req.session.avatar
+                avatar:req.session.avatar,
+                notdefault: true
             });
         })
         
